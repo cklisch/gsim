@@ -27,13 +27,13 @@ void particle::draw(const char* path)
 	for (int x = 0; x < max; x++) {
 		for (int y = 0; y < max; y++) {
 			if (space[x][y] == NULL)
-				write_N_byte(file, WHITE, 4);
+				write_N_byte(file, GREY, 4);
 			else {
-				write_N_byte(file, BLACK, 4);
+				write_N_byte(file, RED, 4);
 			}
 
 		}
-	}b
+	}
 	fclose(file);
 
 }
