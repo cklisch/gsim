@@ -1,22 +1,32 @@
-CC=g++
-CFLAGS=-c -Wall -std=c++11
+TARGET = gsim
+CC = g++-5
+CC_FLAGS = -Wall -Wextra -std=c++11
 
-all:: gsim
+# temporary directories
+SRCDIR = src
+INCDIR = inc
+OBJDIR = obj
+BINDIR = bin
+IMGDIR = img
 
-gsim: main.o particle.o vector.o bmp.o
-	$(CC) main.o particle.o vector.o bmp.o
+CPP_FILES = $(wildcard $(SRCDIR)/*.cpp)
+all: $(TARGET)
 
-main.o: main.cpp
-	$(CC) $(CFLAGS) main.cpp
+# notdir  	strip directory prefix
+# :.cpp=.o	replace suffix
+$(TARGET): $(addprefix $(OBJDIR)/, $(notdir $(CPP_FILES:.cpp=.o)))
+	mkdir -p $(BINDIR)
+	$(CC) -o $(BINDIR)/$@ $^
 
-particle.o: particle.cpp
-	$(CC) $(CFLAGS) particle.cpp
-
-vector.o: vector.cpp
-	$(CC) $(CFLAGS) vector.cpp
-
-bmp.o: bmp.cpp
-	 $(CC) $(CFLAGS) bmp.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	mkdir -p $(OBJDIR)
+	$(CC) $(CC_FLAGS) -I$(INCDIR) -c -o $@ $<
 
 clean:
-	rm *.o
+	rm -rf $(OBJDIR) $(BINDIR) $(IMGDIR)
+
+sim:
+	# perform simple simulation with hard compiled parameters
+	bin/$(TARGET) $(IMGDIR)
+	# render video from image sequence
+	ffmpeg -f image2 -i $(IMGDIR)/%05d.bmp -c:v libx264 -crf 0 simulation.mp4
