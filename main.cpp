@@ -33,9 +33,12 @@ void destroy_matrix()
 	}
 }
 
-void write_matrix(particle* p, uint64_t** matrix)
+void write_matrix(std::vector<particle> part, uint64_t** matrix, uint64_t color)
 {
-
+	for (auto p : part) {
+		vector pos = p.get_pos();
+		matrix[][p.p_pos().get_y()] = color;
+	}
 }
 
 
