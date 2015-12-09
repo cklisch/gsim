@@ -53,8 +53,6 @@ int main () {
 	p1.init_space(SIZE);
 
 	
-	//transmitter t;
-
 	std::vector<transmitter> tm;
 	std::vector<reciver> rc;
 
@@ -77,13 +75,11 @@ int main () {
 		tm.push_back(t[i]);
 	}
 
+	// the transmitter particles move around and interact with recivers
 	for (int i = 0; i < ITER; i++) {
 		for (int j = 0; j < TRANS; j++) {
 			t[j].move();
 		}
-		char s[9];
-		sprintf(s, "%05d.bmp", i);
-
 	}
 
 	return 0;

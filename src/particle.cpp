@@ -55,8 +55,6 @@ void transmitter::move()
 {
 	p_pos += p_vel;
 
-	p_pos.print();
-
 	particle* p = space[p_pos.get_x()][p_pos.get_y()];
 
 	if (p != NULL) {
