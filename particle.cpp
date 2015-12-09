@@ -2,8 +2,6 @@
 #include <cstdlib>
 #include "bmp.h"
 
-int transmitter::speed = 0;
-
 particle*** particle::space = NULL;
 
 particle::particle(){}
@@ -14,59 +12,30 @@ void particle::init_space(int size)
 
 	for(int i = 0; i < size; i++) {
 		space[i] = (particle**) malloc(size * sizeof(particle*));
-	}
-}
-
-void particle::draw(const char* path)
-{
-	int max = p_pos.get_max();
-	max*=2;
-	FILE* file = fopen(path, "w");
-	bitmap_file_header(file, max, max);
-	bitmap_info_header(file, max, max);
-	for (int x = 0; x < max; x++) {
-		for (int y = 0; y < max; y++) {
-			if (space[x][y] == NULL)
-				write_N_byte(file, WHITE, 4);
-			else {
-				write_N_byte(file, BLACK, 4);
-			}
-
+		for(int j = 0; j < size; j++) {
+			space[i][j] = NULL;
 		}
-	}b
-	fclose(file);
-
-}
-
-transmitter::transmitter(){}
-
-void transmitter::init_speed(int s)
-{
-	speed = s;
-}
-
-void transmitter::rand_pos(int nonce)
-{
-	p_pos.rand(nonce);
-}
-
-void transmitter::rand_vel(int nonce)
-{
-	p_vel.rand(nonce, speed);
-}
-
-void transmitter::move()
-{
-	p_pos += p_vel;
-
-	particle* p = space[p_pos.get_x()+p_pos.get_max()][p_pos.get_y()+p_pos.get_max()];
-
-	if (p != NULL) {
-		reciver* r = static_cast <reciver*>(p);
-		r->move(p_vel);
-		rand_vel(p_pos.get_x());
 	}
+}
 
+void particle::rand_pos()
+{
+	p_pos.rand();
+}
+
+void particle::rand_vel()
+{
+	p_vel.rand();
+}
+
+void particle::set_pos(int x, int y)
+{
+	p_pos.set(x, y);
+}
+
+void particle::set_vel(int x, int y)
+{
+	p_vel.set(x, y);
 }
 
 vector& particle::get_pos()
@@ -79,10 +48,29 @@ vector& particle::get_vel()
 	return p_vel;
 }
 
-void reciver::rand_pos(int nonce)
+
+
+
+void transmitter::move()
 {
-	p_pos.rand(nonce);
-	space[p_pos.get_x()+p_pos.get_max()][p_pos.get_y()+p_pos.get_max()] = this;
+	p_pos += p_vel;
+
+	p_pos.print();
+
+	particle* p = space[p_pos.get_x()][p_pos.get_y()];
+
+	if (p != NULL) {
+		reciver* r = static_cast <reciver*>(p);
+		r->move(p_vel);
+		rand_vel();
+	}
+
+}
+
+void reciver::rand_pos()
+{
+	p_pos.rand();
+	space[p_pos.get_x()][p_pos.get_y()] = this;
 }
 
 void reciver::vel_null()
@@ -95,15 +83,20 @@ void reciver::inc_mass()
 	mass++;
 }
 
+void reciver::set_mass(int m)
+{
+	mass = m;
+}
+
 void reciver::move(vector v)
 {
-	space[p_pos.get_x()+p_pos.get_max()][p_pos.get_y()+p_pos.get_max()] = NULL;
+	space[p_pos.get_x()][p_pos.get_y()] = NULL;
 	p_vel -= v;
 	p_vel /= 2;
 	p_pos += p_vel;
-	particle* p = space[p_pos.get_x()+p_pos.get_max()][p_pos.get_y()+p_pos.get_max()];
+	particle* p = space[p_pos.get_x()][p_pos.get_y()];
 	if (p == NULL) {
-		space[p_pos.get_x()+p_pos.get_max()][p_pos.get_y()+p_pos.get_max()] = this;
+		space[p_pos.get_x()][p_pos.get_y()] = this;
 	}
 	else {
 		reciver* r = static_cast <reciver*>(p);

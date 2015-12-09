@@ -4,28 +4,25 @@
 class particle
 {
 protected:
-	vector p_pos;
-	vector p_vel;
-	static particle*** space; // we put only recivers in this space.
+	pos_vector p_pos;
+	vel_vector p_vel;
+	static particle*** space; // we only track recivers in this space.
 
 public:
 	particle();
 	void init_space(int);
-	void draw(const char*);
+	void rand_pos();
+	void rand_vel();
+	void set_pos(int, int);
+	void set_vel(int, int);
 	vector& get_pos();
 	vector& get_vel();
 };
 
 class transmitter : public particle
 {
-private:
-	static int speed;
-
 public:
-	transmitter();
-	void init_speed(int); // call once to set speed of transmitter
-	void rand_pos(int);
-	void rand_vel(int);
+	transmitter(){};
 	void move();
 
 
@@ -38,9 +35,10 @@ private:
 public:	
 	reciver(){};
 	~reciver(){};
-	void rand_pos(int);
+	void rand_pos();
 	void vel_null();
 	void move(vector);
+	void set_mass(int);
 	void inc_mass();
 	
 };
