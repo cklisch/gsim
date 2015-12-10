@@ -1,60 +1,28 @@
-/*!
-\brief A vector in a two dimensional torus space. With equal width and hight and max being absolut maximum.
+/**
+ * @brief 2D vectors
+ */
 
-*/
-
-	enum type {
-		BASE,
-		POS,
-		VEL
-	};
-
-class vector
+class Vector
 {
 private:
-	int v_x;
-	int v_y;
-	static type t;
+	int _x;
+	int _y;
 
 public:
+	Vector();
 
-	vector();
 	void set(int, int);
 	void print();
 	int get_x();
 	int get_y();
-	virtual type get_type();
-	virtual void check_torus();
 
-	vector& operator+=(const vector&);
-	vector& operator-=(const vector&);
-	vector& operator/=(int);
+	// wrap negative coordinates to stay inside a rectangle
+	void wrap(int,int);
 
-};
-
-class vel_vector : public vector
-{
-private:
-	static int vel_max;
-	static type t;
-
-public:
-	vel_vector();
-	type get_type();
-	void set_max(int);
-	void rand();
-};
-
-class pos_vector : public vector
-{
-private:
-	static int pos_max;
-	static type t;
-
-public:
-	pos_vector();
-	type get_type();
-	void set_max(int);
-	void check_torus();
-	void rand();
+	// linear algebra
+	void operator+=(const vector&);
+	void operator-=(const vector&);
+	void operator*=(int);
+	void operator/=(int);
+	bool operator==(const vector&)
 };
