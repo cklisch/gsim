@@ -1,103 +1,88 @@
 #include "particle.h"
-#include <cstdlib>
-#include "bmp.h"
+#include <math>
+#include <iostream>
 
-particle*** particle::space = NULL;
 
-particle::particle(){}
+Particle::Particle() {}
 
-void particle::init_space(int size)
+Vector& Particle::get_pos()
 {
-	space = (particle***) malloc(size * sizeof(particle**));
+	return _position;
+}
 
-	for(int i = 0; i < size; i++) {
-		space[i] = (particle**) malloc(size * sizeof(particle*));
-		for(int j = 0; j < size; j++) {
-			space[i][j] = NULL;
-		}
+Massless::Massless(int e, const Vector& pos, const double dir)
+	: _energy(e), _posistion(pos), _direction(dir) {}
+
+double Massless::get_direction()
+{
+	return _direction;
+}
+
+double Massless::get_energy()
+{
+	return _energy;
+}
+
+void Massless::move()
+{
+	displace = Vector(std::cos(_direction),std::sin(_direction)) *= c;
+	_position += displace;
+}
+
+void Massless::print()
+{
+	cout <<
+		"Massless " <<
+		_pos.print() << " " <<
+		_energy << " " <<
+		_direction <<
+	endl;
+}
+
+Massive::Massive(int e, const Vector& pos)
+	: _energy(e), _position(pos)
+{
+	_displace = Vector(0,0);
+}
+
+Vector& Massive::get_displace()
+{
+	return _displace;
+}
+double _lorentz(double e)
+{
+	return _c * std::sqrt(1 - ((m * c^2)/(e + m * c^2))^2);
+}
+void Massive::operator+=(const Massive& p)
+{
+	_energy += p.get_energy();
+}
+void Massive::interact(const Massless& p)
+{
+	_displace += p.get_direction()
+}
+
+bool Massive::collide(const Massive& p)
+{
+	if (p.get_displace().null())
+	{
+		// give energy to colliding particle
+		p += *this;
+		// self-destruct
+		delete this;
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
-void particle::rand_pos()
+void Massive::move()
 {
-	p_pos.rand();
-}
-
-void particle::rand_vel()
-{
-	p_vel.rand();
-}
-
-void particle::set_pos(int x, int y)
-{
-	p_pos.set(x, y);
-}
-
-void particle::set_vel(int x, int y)
-{
-	p_vel.set(x, y);
-}
-
-vector& particle::get_pos()
-{
-	return p_pos;
-} 
-
-vector& particle::get_vel()
-{
-	return p_vel;
-}
-
-
-
-
-void transmitter::move()
-{
-	p_pos += p_vel;
-
-	particle* p = space[p_pos.get_x()][p_pos.get_y()];
-
-	if (p != NULL) {
-		reciver* r = static_cast <reciver*>(p);
-		r->move(p_vel);
-		rand_vel();
-	}
-
-}
-
-void reciver::rand_pos()
-{
-	p_pos.rand();
-	space[p_pos.get_x()][p_pos.get_y()] = this;
-}
-
-void reciver::vel_null()
-{
-	p_vel.set(0,0);
-}
-
-void reciver::inc_mass()
-{
-	mass++;
-}
-
-void reciver::set_mass(int m)
-{
-	mass = m;
-}
-
-void reciver::move(vector v)
-{
-	space[p_pos.get_x()][p_pos.get_y()] = NULL;
-	p_vel -= v;
-	p_vel /= 2;
-	p_pos += p_vel;
-	particle* p = space[p_pos.get_x()][p_pos.get_y()];
-	if (p == NULL) {
-		space[p_pos.get_x()][p_pos.get_y()] = this;
-	}
-	else {
-		reciver* r = static_cast <reciver*>(p);
-		r->inc_mass();
-	}
+	// compute compensated impulse
+	double e = lorentz(_displace.get_length());
+	_diplace *= e/_displace.get_length();
+	_position += _displace;
+	_displace.set(0,0);
 }

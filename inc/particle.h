@@ -4,6 +4,9 @@
  * In a crazy universe without momentum
  */
 
+#ifndef PARTICLE_
+#define PARTICLE_
+
 #include "vector.h"
 
 class Particle
@@ -14,10 +17,13 @@ private:
 	static int _c; // speed of light
 
 public:
-	Particle(int energy, const Vector& position);
+	Particle();
 	virtual ~Particle();
 	Vector& get_pos();
+	int get_energy();
 	virtual void move();
+
+	virtual void print();
 };
 
 class Massless : public Particle
@@ -36,15 +42,22 @@ class Massive : public Particle
 private:
 	// change information per round
 	Vector _displace;
+	// lorentz factor calculation
+	static double _lorentz(double energy);
 
 public:
-	double _displace_direction;
-	// receive relativistic impulse by transmitter
-	// also emit more tranmitters
+	Particle(int energy, const Vector& position);
+	Vector& get_displace();
+	// add energy
+	void operator+=(const Massive& collision);
+
+	// receive impulse by transmitter
 	void interact(const Massless& interaction);
 	// collide with other particle if it won't move any more
-	// give it all `energy` and self-destruct
-	void collide(Massive& collision);
+	// give it all `energy` and self-destruct, return true
+	bool collide(const Massive& collision);
 	// move in direction of `displace`
 	// with lorentz-compensated distance of `displace
-}
+};
+
+#endif // PARTICLE_

@@ -14,6 +14,30 @@
 #define REC 10
 #define ITER 100
 
+// void rand()
+// {
+//	std::random_device seed;
+//     std::mt19937 gen(seed());
+//     std::uniform_int_distribution<int> dist(-vel_max, vel_max-1);
+//	int a = dist(gen);
+//	int b;
+//	if (dist(gen) < 0) {
+//		 b = vel_max;
+//	}
+//	else {
+//		b = -vel_max;
+//	}
+//	if (dist(gen) < 0) {
+//		set(a,b);
+//	}
+//	else {
+//		set(b,a);
+//	}
+
+// }
+
+
+
 uint64_t** init_matrix()
 {
 	uint64_t** matrix = (uint64_t**) malloc(2*SIZE*8);
