@@ -17,30 +17,34 @@ public:
 	Particle(int energy, const Vector& position);
 	virtual ~Particle();
 	Vector& get_pos();
+	virtual void move();
 };
 
 class Massless : public Particle
 {
 private:
-	double _direction; // 0 <= x < 2PI
+	double _direction; // in radians
 
 public:
 	Massless(int energy, const Vector& position, const double direction);
 	double get_direction();
-	void move(); // move to `direction` with distance `c`
+	// move to `direction` with distance `c`
 };
 
 class Massive : public Particle
 {
 private:
+	// change information per round
 	Vector _displace;
 
 public:
-	Vector& get_displace();
+	double _displace_direction;
 	// receive relativistic impulse by transmitter
 	// also emit more tranmitters
 	void interact(const Massless& interaction);
 	// collide with other particle if it won't move any more
 	// give it all `energy` and self-destruct
 	void collide(Massive& collision);
+	// move in direction of `displace`
+	// with lorentz-compensated distance of `displace
 }

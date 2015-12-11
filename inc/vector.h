@@ -9,7 +9,7 @@ private:
 	int _y;
 
 public:
-	Vector();
+	Vector(int,int);
 
 	void set(int, int);
 	void print();
@@ -20,6 +20,7 @@ public:
 	void wrap(int,int);
 
 	// linear algebra
+	double get_length();
 	void operator+=(const vector&);
 	void operator-=(const vector&);
 	void operator*=(int);
