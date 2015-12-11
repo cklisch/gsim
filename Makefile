@@ -30,6 +30,6 @@ clean:
 
 sim:
 	# perform simple simulation with hard compiled parameters
-	$(BINDIR)/$(TARGET)
+	$(TARGET)
 	# render video from image sequence
 	ffmpeg -f image2 -i $(IMGDIR)/%05d.bmp -c:v libx264 -crf 0 simulation.mp4

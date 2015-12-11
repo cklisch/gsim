@@ -1,45 +1,46 @@
+/**
+ * @brief Relativistic particles
+ *
+ * In a crazy universe without momentum
+ */
+
 #include "vector.h"
-#include <string>
 
-class particle
-{
-protected:
-	pos_vector p_pos;
-	vel_vector p_vel;
-	static particle*** space; // we only track recivers in this space.
-
-public:
-	particle();
-	void init_space(int);
-	void rand_pos();
-	void rand_vel();
-	void set_pos(int, int);
-	void set_vel(int, int);
-	vector& get_pos();
-	vector& get_vel();
-};
-
-class transmitter : public particle
-{
-public:
-	transmitter(){};
-	void move();
-
-
-};
-
-class reciver : public particle
+class Particle
 {
 private:
-	int mass;
-public:	
-	reciver(){};
-	~reciver(){};
-	void rand_pos();
-	void vel_null();
-	void move(vector);
-	void set_mass(int);
-	void inc_mass();
-	
+	Vector _position; // in toroidal space
+	int _energy; // = mass
+	static int _c; // speed of light
+
+public:
+	Particle(int energy, const Vector& position);
+	virtual ~Particle();
+	Vector& get_pos();
 };
 
+class Massless : public Particle
+{
+private:
+	double _direction; // 0 <= x < 2PI
+
+public:
+	Massless(int energy, const Vector& position, const double direction);
+	double get_direction();
+	void move(); // move to `direction` with distance `c`
+};
+
+class Massive : public Particle
+{
+private:
+	Vector _displace;
+
+public:
+	Vector& get_displace();
+	// receive relativistic impulse by transmitter
+	// also emit more tranmitters
+	void interact(const Massless& interaction);
+	// collide with other particle if it won't move any more
+	// give it all `energy` and self-destruct
+	void collide(Massive& collision);
+}
