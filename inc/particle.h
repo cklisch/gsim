@@ -12,29 +12,38 @@
 class Particle
 {
 private:
-	Vector _position; // in toroidal space
 	int _energy; // = mass
-	static int _c; // speed of light
-
+	Vector _position; // in toroidal space
 public:
-	Particle();
+	Particle(int energy, const Vector& position);
 	virtual ~Particle();
-	Vector& get_pos();
-	int get_energy();
-	virtual void move();
 
-	virtual void print();
+	const Vector& get_pos() const;
+	void set_pos(const Vector&);
+	int get_energy() const;
+	void set_energy(int);
+
+
+	static const int c = 10; // speed of light
+
+	virtual void move()=0;
+
+	virtual void print() const =0;
 };
 
 class Massless : public Particle
 {
 private:
 	double _direction; // in radians
+	Vector _velocity() const;
 
 public:
 	Massless(int energy, const Vector& position, const double direction);
-	double get_direction();
+	Vector get_energy() const;
 	// move to `direction` with distance `c`
+	void move();
+
+	void print() const;
 };
 
 class Massive : public Particle
@@ -43,21 +52,25 @@ private:
 	// change information per round
 	Vector _displace;
 	// lorentz factor calculation
-	static double _lorentz(double energy);
+	double _lorentz(double energy);
 
 public:
-	Particle(int energy, const Vector& position);
-	Vector& get_displace();
+	Massive(int energy, const Vector& position);
+	const Vector& get_displace() const;
 	// add energy
 	void operator+=(const Massive& collision);
 
 	// receive impulse by transmitter
 	void interact(const Massless& interaction);
-	// collide with other particle if it won't move any more
-	// give it all `energy` and self-destruct, return true
-	bool collide(const Massive& collision);
+	// collide with other particle
+	// if it won't move any more, give it all `energy`, return true
+	// return false otherwise
+	bool collide(Massive& collision) const;
 	// move in direction of `displace`
-	// with lorentz-compensated distance of `displace
+	// with lorentz-compensated distance of `displace`
+	void move();
+
+	void print() const;
 };
 
 #endif // PARTICLE_

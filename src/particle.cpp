@@ -1,75 +1,102 @@
 #include "particle.h"
-#include <math>
+#include <cmath>
 #include <iostream>
 
 
-Particle::Particle() {}
+Particle::Particle(int e, const Vector& pos)
+	: _energy(e), _position(pos) {}
 
-Vector& Particle::get_pos()
+Particle::~Particle() {}
+
+const Vector& Particle::get_pos() const
 {
 	return _position;
 }
 
-Massless::Massless(int e, const Vector& pos, const double dir)
-	: _energy(e), _posistion(pos), _direction(dir) {}
-
-double Massless::get_direction()
+void Particle::set_pos(const Vector& v)
 {
-	return _direction;
+	_position = v;
 }
 
-double Massless::get_energy()
+int Particle::get_energy() const
 {
 	return _energy;
 }
 
-void Massless::move()
+void Particle::set_energy(int e)
 {
-	displace = Vector(std::cos(_direction),std::sin(_direction)) *= c;
-	_position += displace;
+	_energy = e;
 }
 
-void Massless::print()
+void Particle::move() {};
+void Particle::print() const {};
+
+Massless::Massless(int e, const Vector& pos, const double dir)
+	: Particle(e, pos), _direction(dir) {}
+
+Vector Massless::_velocity() const
 {
-	cout <<
-		"Massless " <<
-		_pos.print() << " " <<
-		_energy << " " <<
-		_direction <<
-	endl;
+	return Vector(std::cos(_direction),std::sin(_direction));
+}
+
+Vector Massless::get_energy() const
+{
+	Vector e = _velocity();
+	e *= Particle::get_energy();
+	return e;
+}
+
+void Massless::move()
+{
+	Vector displace = _velocity();
+	displace *= Particle::c;
+	set_pos(displace);
+}
+
+void Massless::print() const
+{
+	std::cout <<
+		"Massless e=" <<
+		Particle::get_energy() << " p=";
+		//  << " " <<
+		// Particle:: <<
+		// get_direction() <<
+	get_pos().print();
+	std::cout << std::endl;
 }
 
 Massive::Massive(int e, const Vector& pos)
-	: _energy(e), _position(pos)
-{
-	_displace = Vector(0,0);
-}
+	: Particle(e, pos), _displace(Vector(0,0)) {}
 
-Vector& Massive::get_displace()
+const Vector& Massive::get_displace() const
 {
 	return _displace;
 }
-double _lorentz(double e)
+
+double Massive::_lorentz(double e)
 {
-	return _c * std::sqrt(1 - ((m * c^2)/(e + m * c^2))^2);
-}
-void Massive::operator+=(const Massive& p)
-{
-	_energy += p.get_energy();
-}
-void Massive::interact(const Massless& p)
-{
-	_displace += p.get_direction()
+	int c = Particle::c;
+	int m = get_energy();
+	return c * std::sqrt(1 - ((m * std::pow(c,2))/std::pow(e + m * std::pow(c,2),2)));
 }
 
-bool Massive::collide(const Massive& p)
+void Massive::operator+=(const Massive& p)
+{
+	set_energy(get_energy() + p.get_energy());
+}
+
+void Massive::interact(const Massless& p)
+{
+
+	_displace += p.get_energy();
+}
+
+bool Massive::collide(Massive& p) const
 {
 	if (p.get_displace().null())
 	{
 		// give energy to colliding particle
 		p += *this;
-		// self-destruct
-		delete this;
 		return true;
 	}
 	else
@@ -81,8 +108,20 @@ bool Massive::collide(const Massive& p)
 void Massive::move()
 {
 	// compute compensated impulse
-	double e = lorentz(_displace.get_length());
-	_diplace *= e/_displace.get_length();
-	_position += _displace;
+	double e = _lorentz(_displace.get_length());
+	// compensate displace vector length
+	_displace *= e/_displace.get_length();
+	set_pos(get_pos() + _displace);
 	_displace.set(0,0);
+}
+
+void Massive::print() const
+{
+	std::cout <<
+		"Massive e=" <<
+		get_energy() << " p=";
+	get_pos().print();
+	std::cout << " d=";
+	get_displace().print();
+	std::cout << std::endl;
 }

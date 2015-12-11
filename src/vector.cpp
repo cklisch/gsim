@@ -1,5 +1,5 @@
 #include "vector.h"
-#include <math>
+#include <cmath>
 #include <iostream>
 
 // #include <cstdlib>
@@ -15,42 +15,51 @@ void Vector::set(int x, int y)
 	_y = y;
 }
 
-int Vector::get_x() 
+int Vector::get_x() const
 {
 	return _x;
 }
 
-int Vector::get_y()
+int Vector::get_y() const
 {
 	return _y;
 }
 
-void Vector::print()
+void Vector::print() const
 {
-	std::cout << "(" << _x << "," << _y << ")" << std::endl;
+	std::cout << "(" << _x << "," << _y << ")";
 }
 
 void Vector::wrap(int x, int y)
 {
-	if (_x < 0 || _x > x):
+	if (_x < 0 || _x > x)
 	{
 		_x = _x % x;
 	}
-	if (_y < 0 || _y > y):
+	if (_y < 0 || _y > y)
 	{
 		_y = _y % y;
 	}
 }
 
-bool Vector::null()
+bool Vector::null() const
 {
 	return _x == 0 && _y == 0;
 }
-double Vector::get_length()
+double Vector::get_length() const
 {
-	return std::sqrt(x^2 + y^2);
+	return std::sqrt((_x^2) + (_y^2));
 }
 
+Vector Vector::operator+(const Vector &v) const
+{
+	return Vector(_x + v.get_x(), _y + v.get_y());
+}
+
+Vector Vector::operator-(const Vector &v) const
+{
+	return Vector(_x - v.get_x(), _y - v.get_y());
+}
 
 void Vector::operator+=(const Vector &v)
 {
@@ -58,7 +67,7 @@ void Vector::operator+=(const Vector &v)
 	_y += v.get_y();
 }
 
-void Vector::operator+=(const Vector &v)
+void Vector::operator-=(const Vector &v)
 {
 	_x -= v.get_x();
 	_y -= v.get_y();
