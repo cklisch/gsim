@@ -1,5 +1,5 @@
 #include "vector.h"
-#include <cmath>
+#include <math.h>
 #include <iostream>
 
 // #include <cstdlib>
@@ -48,7 +48,7 @@ bool Vector::null() const
 }
 double Vector::get_length() const
 {
-	return std::sqrt((_x^2) + (_y^2));
+	return sqrt(pow(_x,2) + pow(_y,2));
 }
 
 Vector Vector::operator+(const Vector &v) const

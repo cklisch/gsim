@@ -1,5 +1,5 @@
 #include "particle.h"
-#include <cmath>
+#include <math.h>
 #include <iostream>
 
 
@@ -36,7 +36,7 @@ Massless::Massless(int e, const Vector& pos, const double dir)
 
 Vector Massless::_velocity() const
 {
-	return Vector(std::cos(_direction),std::sin(_direction));
+	return Vector(cos(_direction),sin(_direction));
 }
 
 Vector Massless::get_energy() const
@@ -77,7 +77,7 @@ double Massive::_lorentz(double e)
 {
 	int c = Particle::c;
 	int m = get_energy();
-	return c * std::sqrt(1 - ((m * std::pow(c,2))/std::pow(e + m * std::pow(c,2),2)));
+	return c * sqrt(1 - ((m * pow(c,2))/(e + m * pow(c,2))));
 }
 
 void Massive::operator+=(const Massive& p)
@@ -110,7 +110,7 @@ void Massive::move()
 	// compute compensated impulse
 	double e = _lorentz(_displace.get_length());
 	// compensate displace vector length
-	_displace *= e/_displace.get_length();
+	_displace *= round(e/_displace.get_length());
 	set_pos(get_pos() + _displace);
 	_displace.set(0,0);
 }

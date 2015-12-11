@@ -63,7 +63,7 @@
 
 int main () {
 
-	Massless p = Massless(10,Vector(0,0),0);
+	Massless p = Massless(1,Vector(0,0),0);
 	Massive m = Massive(1,Vector(10,0));
 
 	p.print();
