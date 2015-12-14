@@ -14,6 +14,8 @@ class Particle
 private:
 	int _energy; // = mass
 	Vector _position; // in toroidal space
+protected:
+	static const int c; // speed of light
 public:
 	Particle(int energy, const Vector& position);
 	virtual ~Particle();
@@ -22,9 +24,8 @@ public:
 	void set_pos(const Vector&);
 	int get_energy() const;
 	void set_energy(int);
+	void round();
 
-
-	static const int c = 10; // speed of light
 
 	virtual void move()=0;
 

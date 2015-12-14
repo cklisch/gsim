@@ -7,38 +7,41 @@
 
 // #include <random>
 
-Vector::Vector(int x, int y) : _x(x), _y(y) {}
+Vector::Vector(double x, double y) : _x(x), _y(y) {}
 
-void Vector::set(int x, int y)
+void Vector::set(double x, double y)
 {
 	_x = x;
 	_y = y;
 }
 
-int Vector::get_x() const
+double Vector::get_x() const
 {
 	return _x;
 }
 
-int Vector::get_y() const
+double Vector::get_y() const
 {
 	return _y;
 }
 
-void Vector::print() const
-{
-	std::cout << "(" << _x << "," << _y << ")";
-}
-
 void Vector::wrap(int x, int y)
 {
-	if (_x < 0 || _x > x)
+	if (_x < 0)
 	{
-		_x = _x % x;
+		_x += x;
 	}
-	if (_y < 0 || _y > y)
+	else if (_x > x)
 	{
-		_y = _y % y;
+		_x -= x;
+	}
+	if (_y < 0)
+	{
+		_y += y;
+	}
+	else if(_y > y)
+	{
+		_y -= y;
 	}
 }
 
@@ -73,13 +76,13 @@ void Vector::operator-=(const Vector &v)
 	_y -= v.get_y();
 }
 
-void Vector::operator*=(int a)
+void Vector::operator*=(double a)
 {
 	_x *= a;
 	_y *= a;
 }
 
-void Vector::operator/=(int a)
+void Vector::operator/=(double a)
 {
 	_x /= a;
 	_y /= a;
@@ -88,4 +91,15 @@ void Vector::operator/=(int a)
 bool Vector::operator==(const Vector &v)
 {
 	return _x == v.get_x() && _y == v.get_y();
+}
+
+void Vector::vround()
+{
+	_x = round(_x);
+	_y = round(_y);
+}
+
+void Vector::print() const
+{
+	std::cout << "(" << _x << "," << _y << ")";
 }

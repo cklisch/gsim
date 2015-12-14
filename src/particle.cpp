@@ -28,6 +28,11 @@ void Particle::set_energy(int e)
 	_energy = e;
 }
 
+void Particle::round()
+{
+	_position.vround();
+}
+
 void Particle::move() {};
 void Particle::print() const {};
 
@@ -60,8 +65,9 @@ void Massless::print() const
 		Particle::get_energy() << " p=";
 		//  << " " <<
 		// Particle:: <<
-		// get_direction() <<
 	get_pos().print();
+	std::cout << " v=";
+	_velocity().print();
 	std::cout << std::endl;
 }
 
@@ -110,7 +116,10 @@ void Massive::move()
 	// compute compensated impulse
 	double e = _lorentz(_displace.get_length());
 	// compensate displace vector length
-	_displace *= round(e/_displace.get_length());
+	if (_displace.get_length() != 0)
+		{_displace *= e/_displace.get_length();}
+	else
+		{_displace *= 0;}
 	set_pos(get_pos() + _displace);
 	_displace.set(0,0);
 }
