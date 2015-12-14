@@ -1,60 +1,42 @@
-/*!
-\brief A vector in a two dimensional torus space. With equal width and hight and max being absolut maximum.
+/**
+ * @brief 2D vectors
+ */
 
-*/
+#ifndef VECTOR_
+#define VECTOR_
 
-	enum type {
-		BASE,
-		POS,
-		VEL
-	};
-
-class vector
+class Vector
 {
 private:
-	int v_x;
-	int v_y;
-	static type t;
+	double _x;
+	double _y;
 
 public:
+	Vector(double,double);
 
-	vector();
-	void set(int, int);
-	void print();
-	int get_x();
-	int get_y();
-	virtual type get_type();
-	virtual void check_torus();
+	void set(double, double);
+	double get_x() const;
+	double get_y() const;
 
-	vector& operator+=(const vector&);
-	vector& operator-=(const vector&);
-	vector& operator/=(int);
+	// wrap negative coordinates to stay inside a rectangle
+	void wrap(int,int);
+	bool null() const;
 
+	// linear algebra
+	double get_length() const;
+	Vector operator+(const Vector&) const;
+	Vector operator-(const Vector&) const;
+	void operator+=(const Vector&);
+	void operator-=(const Vector&);
+	void operator*=(double);
+	void operator/=(double);
+	bool operator==(const Vector&);
+
+	// compiler cannot distinguish between
+	// Vector::round() and round(x) from <math.h>
+	void vround();
+
+	void print() const;
 };
 
-class vel_vector : public vector
-{
-private:
-	static int vel_max;
-	static type t;
-
-public:
-	vel_vector();
-	type get_type();
-	void set_max(int);
-	void rand();
-};
-
-class pos_vector : public vector
-{
-private:
-	static int pos_max;
-	static type t;
-
-public:
-	pos_vector();
-	type get_type();
-	void set_max(int);
-	void check_torus();
-	void rand();
-};
+#endif // VECTOR_
